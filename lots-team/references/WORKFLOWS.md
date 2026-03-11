@@ -9,10 +9,10 @@ Practical workflow examples for AI agents working on lots.team.
 Always do this at the start of a session before taking any action:
 
 ```
-1. list_organizations         → get organization_id
-2. list_organization_members  → find your member record, read role_instructions
-3. list_projects              → get available project_ids
-4. list_project_context       → skim titles/descriptions for project context
+1. lotsteam_list_organizations         → get organization_id
+2. lotsteam_list_organization_members  → find your member record, read role_instructions
+3. lotsteam_list_projects              → get available project_ids
+4. lotsteam_list_project_context       → skim titles/descriptions for project context
 ```
 
 If your member record has `role_instructions`, read and follow them — the human team wrote them specifically for you.
@@ -24,24 +24,24 @@ If your member record has `role_instructions`, read and follow them — the huma
 **Scenario:** Review new feedback, categorize it, create tasks for actionable items, link them.
 
 ```
-1. list_feedback(project_id, status="new")
+1. lotsteam_list_feedback(project_id, status="new")
    → Identify feedback to triage
 
 2. For each feedback item:
-   a. get_feedback(project_id, feedback_id)
+   a. lotsteam_get_feedback(project_id, feedback_id)
       → Read full description
 
-   b. update_feedback(project_id, feedback_id, status="triaged", type="bug|feature|improvement")
+   b. lotsteam_update_feedback(project_id, feedback_id, status="triaged", type="bug|feature|improvement")
       → Categorize it
 
    c. If actionable:
-      create_task(project_id, title="...", status="todo", priority="medium|high")
+      lotsteam_create_task(project_id, title="...", status="todo", priority="medium|high")
       → Get task_id from response
 
-      link_feedback_to_task(project_id, task_id, feedback_id)
+      lotsteam_link_feedback_to_task(project_id, task_id, feedback_id)
       → Connect feedback to task
 
-3. create_notification(user_id=<team_lead>, title="Feedback triage complete", message="X items triaged, Y tasks created")
+3. lotsteam_create_notification(user_id=<team_lead>, title="Feedback triage complete", message="X items triaged, Y tasks created")
    → Alert the team
 ```
 
@@ -52,27 +52,27 @@ If your member record has `role_instructions`, read and follow them — the huma
 **Scenario:** Pick up an assigned task, do the work, create a deliverable, submit for review.
 
 ```
-1. list_tasks(project_id, status="in-progress", assignee_id=<my_user_id>)
+1. lotsteam_list_tasks(project_id, status="in-progress", assignee_id=<my_user_id>)
    → Find my assigned tasks
 
-2. get_task(project_id, task_id)
+2. lotsteam_get_task(project_id, task_id)
    → Understand requirements
 
-3. list_project_context(project_id)
+3. lotsteam_list_project_context(project_id)
    → Get relevant project context and guidelines
 
 4. [Do the work — write content, analysis, etc.]
 
-5. create_deliverable(task_id, title="...", content="<markdown content>", type="document")
+5. lotsteam_create_deliverable(task_id, title="...", content="<markdown content>", type="document")
    → Create the deliverable
 
-6. update_task(project_id, task_id, status="in-progress")
+6. lotsteam_update_task(project_id, task_id, status="in-progress")
    → Confirm task is active
 
-7. submit_deliverable_for_review(deliverable_id)
+7. lotsteam_submit_deliverable_for_review(deliverable_id)
    → Send to human for review. DO NOT self-approve.
 
-8. create_notification(user_id=<task_owner>, title="Deliverable ready for review", message="...")
+8. lotsteam_create_notification(user_id=<task_owner>, title="Deliverable ready for review", message="...")
    → Alert the reviewer
 ```
 
@@ -83,13 +83,13 @@ If your member record has `role_instructions`, read and follow them — the huma
 **Scenario:** Draft and publish a product update changelog entry.
 
 ```
-1. list_tasks(project_id, status="done")
+1. lotsteam_list_tasks(project_id, status="done")
    → Find recently completed tasks to highlight
 
-2. list_feedback(project_id, status="resolved")
+2. lotsteam_list_feedback(project_id, status="resolved")
    → Find resolved feedback to mention
 
-3. create_changelog(
+3. lotsteam_create_changelog(
      project_id,
      title="v1.x — [Feature Name]",
      content="## What's New\n\n...\n\n## Bug Fixes\n\n...",
@@ -99,7 +99,7 @@ If your member record has `role_instructions`, read and follow them — the huma
 
 4. [Wait for human review / approval]
 
-5. publish_changelog(project_id, changelog_id)
+5. lotsteam_publish_changelog(project_id, changelog_id)
    → Make it visible to users
 ```
 
@@ -135,21 +135,21 @@ If your member record has `role_instructions`, read and follow them — the huma
 **Scenario:** Sync customer records after an integration import or manual update.
 
 ```
-1. list_customers(project_id, search="<company>")
+1. lotsteam_list_customers(project_id, search="<company>")
    → Check if customer exists
 
 2a. If exists:
-    get_customer(project_id, customer_id)
+    lotsteam_get_customer(project_id, customer_id)
     → Review current data
 
-    update_customer(project_id, customer_id, company="...", status="active")
+    lotsteam_update_customer(project_id, customer_id, company="...", status="active")
     → Update record
 
 2b. If not exists:
-    create_customer(project_id, name="...", email="...", company="...", status="active")
+    lotsteam_create_customer(project_id, name="...", email="...", company="...", status="active")
     → Create new record
 
-3. get_customer_stats(project_id)
+3. lotsteam_get_customer_stats(project_id)
    → Verify aggregate stats
 ```
 
@@ -160,18 +160,18 @@ If your member record has `role_instructions`, read and follow them — the huma
 **Scenario:** Process inbound support messages.
 
 ```
-1. list_contact_messages(project_id, status="new")
+1. lotsteam_list_contact_messages(project_id, status="new")
    → Find unhandled messages
 
-2. get_contact_message(project_id, message_id)
+2. lotsteam_get_contact_message(project_id, message_id)
    → Read full message
 
 3. [Determine appropriate response]
 
-4. reply_to_contact_message(project_id, message_id, reply_content="...")
+4. lotsteam_reply_to_contact_message(project_id, message_id, reply_content="...")
    → Send reply
 
-5. update_contact_message(project_id, message_id, status="resolved")
+5. lotsteam_update_contact_message(project_id, message_id, status="resolved")
    → Mark as handled
 ```
 
@@ -182,7 +182,7 @@ If your member record has `role_instructions`, read and follow them — the huma
 Before performing a sensitive action, verify you have the right permissions:
 
 ```
-1. list_organization_members(organization_id)
+1. lotsteam_list_organization_members(organization_id)
    → Find your member record
 
 2. Check member.role:
