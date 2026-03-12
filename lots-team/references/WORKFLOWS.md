@@ -157,7 +157,7 @@ If your member record has `role_instructions`, read and follow them — the huma
 
 ## 7. Contact Message Response Workflow
 
-**Scenario:** Process inbound support messages.
+**Scenario:** Process inbound support messages. Contact messages support **threaded conversations** — customers can reply back via the support portal, so you may need to handle follow-ups.
 
 ```
 1. lotsteam_list_organization_members(organization_id)
@@ -176,17 +176,21 @@ If your member record has `role_instructions`, read and follow them — the huma
 4. lotsteam_list_contact_messages(project_id, status="new")
    → Find unhandled messages
 
-5. lotsteam_get_contact_message(project_id, message_id)
-   → Read full message
+5. lotsteam_get_contact_thread(message_id)
+   → Read the FULL thread (original message + all replies)
+   → This is critical for follow-ups — the customer may have replied with more details
 
-6. [Determine appropriate response]
+6. [Determine appropriate response based on the full conversation history]
 
-7. lotsteam_reply_to_contact_message(project_id, message_id, reply_content="...")
-   → Send reply
+7. lotsteam_reply_to_contact_message(contact_message_id, reply_message="...")
+   → Send reply (email with "View & Reply" link is sent automatically)
+   → Multiple replies are supported — threads can go back and forth
 
-8. lotsteam_update_contact_message(project_id, message_id, status="resolved")
-   → Mark as handled
+8. lotsteam_update_contact_message(message_id, status="read")
+   → Mark as handled (status resets to "new" if customer replies again)
 ```
+
+**Important:** Always use `get_contact_thread` instead of `get_contact_message` — the thread view shows the full conversation history including customer follow-ups. A message with status "new" may be a follow-up reply, not a first-time message.
 
 ---
 

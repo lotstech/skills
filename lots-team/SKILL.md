@@ -87,6 +87,7 @@ Organization
 4. **Submit deliverables for review** — Don't mark your own deliverables as approved. Use `submit_deliverable_for_review` and wait for human approval
 5. **Notifications** — After completing a significant action, optionally `create_notification` to alert relevant team members
 6. **Delegation** — Before acting on a notification, check if another team member is better suited based on their `role_name`. See Delegation Rules below
+7. **Threaded conversations** — Contact messages support multi-message threads. Customers can reply via the support portal. Always use `get_contact_thread` to read the full conversation before replying, especially for follow-up messages
 
 ## Delegation Rules
 

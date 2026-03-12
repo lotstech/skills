@@ -120,11 +120,12 @@ All tools available via `https://api.lots.team/mcp`. Tools are called by their *
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `lotsteam_list_contact_messages` | List all contact form submissions | `project_id`, `status?` |
-| `lotsteam_get_contact_message` | Get a specific contact message | `project_id`, `message_id` |
+| `lotsteam_get_contact_message` | Get a specific contact message | `message_id` |
+| `lotsteam_get_contact_thread` | Get message + all replies (use this for threaded conversations) | `message_id` |
 | `lotsteam_create_contact_message` | Create a new contact form submission | `project_id`, `name`, `email`, `message` |
-| `lotsteam_update_contact_message` | Update contact message status | `project_id`, `message_id`, `status` |
-| `lotsteam_reply_to_contact_message` | Send a reply to a contact message | `project_id`, `message_id`, `reply_content` |
-| `lotsteam_delete_contact_message` | Delete a contact message | `project_id`, `message_id` |
+| `lotsteam_update_contact_message` | Update contact message status | `message_id`, `status` |
+| `lotsteam_reply_to_contact_message` | Reply to a message thread (email sent automatically) | `contact_message_id`, `reply_message` |
+| `lotsteam_delete_contact_message` | Delete a contact message | `message_id` |
 
 ---
 
