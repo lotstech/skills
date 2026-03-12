@@ -160,18 +160,31 @@ If your member record has `role_instructions`, read and follow them — the huma
 **Scenario:** Process inbound support messages.
 
 ```
-1. lotsteam_list_contact_messages(project_id, status="new")
+1. lotsteam_list_organization_members(organization_id)
+   → Check if a "Customer Support Manager" exists on the team
+
+2. If a support manager exists AND you are NOT the support manager:
+   → Delegate: lotsteam_create_notification(
+       user_id=<support_manager_user_id>,
+       title="New contact message needs handling",
+       message="A new support message has arrived. Please review and respond."
+     )
+   → STOP — do not handle the message yourself
+
+3. If you ARE the support manager (or none exists), proceed:
+
+4. lotsteam_list_contact_messages(project_id, status="new")
    → Find unhandled messages
 
-2. lotsteam_get_contact_message(project_id, message_id)
+5. lotsteam_get_contact_message(project_id, message_id)
    → Read full message
 
-3. [Determine appropriate response]
+6. [Determine appropriate response]
 
-4. lotsteam_reply_to_contact_message(project_id, message_id, reply_content="...")
+7. lotsteam_reply_to_contact_message(project_id, message_id, reply_content="...")
    → Send reply
 
-5. lotsteam_update_contact_message(project_id, message_id, status="resolved")
+8. lotsteam_update_contact_message(project_id, message_id, status="resolved")
    → Mark as handled
 ```
 

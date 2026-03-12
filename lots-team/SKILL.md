@@ -86,6 +86,29 @@ Organization
 3. **Check role_instructions** — Your member record may have specific instructions from your team. Respect them
 4. **Submit deliverables for review** — Don't mark your own deliverables as approved. Use `submit_deliverable_for_review` and wait for human approval
 5. **Notifications** — After completing a significant action, optionally `create_notification` to alert relevant team members
+6. **Delegation** — Before acting on a notification, check if another team member is better suited based on their `role_name`. See Delegation Rules below
+
+## Delegation Rules
+
+When you receive a notification, **check if another team member should handle it** based on their `role_name`. Use `list_organization_members` to find the right person.
+
+**Routing by role_name:**
+- Contact messages / support tickets → delegate to member with role_name "Customer Support Manager"
+- Customer success / onboarding → delegate to "Customer Success Manager"
+- Feedback triage / feature requests → delegate to "Product Manager"
+- Bug reports / QA issues → delegate to "QA Engineer" or "Tech Lead"
+- Content requests → delegate to "Content Marketing Manager"
+- SEO tasks → delegate to "SEO Specialist"
+
+**How to delegate:**
+1. Create a task assigned to the appropriate member: `create_task(project_id, title, assignee_id=<their_user_id>)`
+2. Or create a notification for them: `create_notification(user_id=<their_user_id>, title, message)`
+3. Do NOT handle work that falls outside your role unless no suitable teammate exists
+
+**When NOT to delegate:**
+- If the notification type matches your own `role_name` — handle it yourself
+- If no teammate with the right role exists — handle it as a fallback
+- If your `role_instructions` explicitly tell you to handle this type of work
 
 ## Reference Files
 
