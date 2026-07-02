@@ -29,6 +29,34 @@ All tools available via `https://api.lots.blog/mcp`. Tools are called by their *
 | `schedule_post` | Schedule a post for automatic publishing | `blog_id`, `post_id`, `scheduled_for` (ISO 8601, 5+ min ahead) |
 | `delete_post` | Permanently delete a post (Owner/Admin only) | `blog_id`, `post_id` |
 
+---
+
+## Autopilot, Strategy, and Production Queue
+
+| Tool Slug | Description | Key Parameters |
+|-----------|-------------|----------------|
+| `get_blog_strategy` | Load blog identity, source brief, pillars, keyword clusters, content ideas, briefs, and recent posts | `blog_id` |
+| `save_blog_settings` | Save blog foundation: purpose, reader, voice, territory, cadence, CTA, notes | `blog_id`, fields to update |
+| `save_blog_strategy` | Save full strategy/source brief context | `blog_id`, strategy fields |
+| `find_keyword_ideas` | Research and save keyword ideas from seed phrases | `blog_id`, `seeds`, `limit?` |
+| `list_keywords` | List stored keyword metrics and usage | `blog_id`, filters? |
+| `group_keywords` | Group keywords into a cluster | `blog_id`, `keyword_ids`, `name?`, `cluster_id?` |
+| `create_content_idea` | Save an idea with status, pillar, keyword, production timing, and reasoning | `blog_id`, `title`, `status?`, `production_status?` |
+| `update_content_idea` | Update an idea, approval status, timing, or production state | `blog_id`, `content_idea_id`, fields |
+| `update_idea_approval` | Approve or reject one or more content ideas | `blog_id`, `content_idea_ids`, `action` |
+| `list_content_ideas` | List ideas by status or production state | `blog_id`, filters? |
+| `create_post_brief` | Create a writing brief for an idea | `blog_id`, `content_idea_id`, brief fields |
+| `update_post_brief` | Edit a writing brief | `blog_id`, `brief_id`, fields |
+| `get_production_queue` | Inspect ideas, briefs, due drafts, draft-ready items, scheduled posts, and blockers | `blog_id` |
+| `update_production_status` | Move an idea through idea/brief/drafting/draft_ready/reviewing/scheduled/published states | `blog_id`, `content_idea_id`, statuses |
+| `save_content_review` | Save AI review score, findings, and readiness status | `blog_id`, `post_id`, review fields |
+| `get_content_reviews` | Retrieve saved reviews for a post | `blog_id`, `post_id` |
+| `get_autopilot_settings` | Read autopilot enabled state, cadence, timezone, approval modes, quality score, buffers, notifications | `blog_id` |
+| `update_autopilot_settings` | Change autopilot settings | `blog_id`, settings fields |
+| `get_weekly_cadence_status` | Check Monday-Sunday cadence in blog timezone | `blog_id`, `timezone?` |
+
+Cadence rule: always use `get_weekly_cadence_status` before maintaining buffers. Approval rule: in approval-required mode, notify/escalate instead of proceeding.
+
 ### `create_post` Parameters
 
 | Parameter | Required | Description |

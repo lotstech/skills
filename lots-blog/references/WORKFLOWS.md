@@ -12,16 +12,54 @@ Always do this at the start of a session:
 1. list_blogs
    → Get blog_id and your role in each blog
 
-2. list_topics(blog_id)
-   → Understand the content taxonomy
+2. get_blog_strategy(blog_id)
+   → Load identity, source brief, pillars, keywords, ideas, briefs, and production context
 
-3. list_posts(blog_id, status="draft", limit=10)
-   → Check existing drafts before creating new content
+3. get_autopilot_settings(blog_id)
+   → Understand cadence, timezone, approval modes, quality score, buffers, and notifications
+
+4. get_weekly_cadence_status(blog_id)
+   → Check the current Monday-Sunday week before doing any buffer maintenance
+
+5. get_production_queue(blog_id)
+   → Inspect ideas, briefs, drafts, scheduled posts, and blockers
 ```
 
 ---
 
-## 2. Write and Publish an Article
+## 2. Cadence-First Autopilot Workflow
+
+**Scenario:** Keep the blog honest to its weekly publishing promise.
+
+```
+1. get_autopilot_settings(blog_id)
+2. get_weekly_cadence_status(blog_id)
+
+3. If strategy is missing:
+   notify/escalate owner for the exact missing strategy inputs.
+   Do not ask questions in hidden/autopilot chat.
+
+4. If current week is behind:
+   a. Use existing draft-ready posts first.
+   b. If drafts need review, run quality review/rewrite until quality_pass_score is met.
+   c. If post_approval_mode="approval_required", notify owner with ready drafts and schedule/publish choices.
+   d. If post_approval_mode="auto", publish/schedule to cover the current week.
+      - Early week: schedule remaining cadence across the week.
+      - Mid/late week with no published posts: publish one now if appropriate, schedule the rest.
+   e. If no drafts exist, create drafts from ready briefs.
+   f. If no briefs exist, create briefs from approved ideas.
+   g. If idea_approval_mode="approval_required" and only pending ideas exist, notify owner with numbered idea choices.
+   h. If no usable ideas exist, generate strong ideas from strategy, keyword gaps, posts, and external research where needed.
+
+5. Only after current-week cadence is healthy:
+   maintain keyword, idea, brief, draft, review, refresh, and performance buffers.
+```
+
+Autopilot sessions are unattended. Never call hidden user-input tools and never ask a question in chat. Use email/Telegram/dashboard notification paths for approvals or missing inputs.
+
+---
+
+## 3. Write and Publish an Article
 
 **Scenario:** Create a full article, optimize for SEO, and publish.
 
@@ -59,7 +97,7 @@ Always do this at the start of a session:
 
 ---
 
-## 3. Create a Listicle Post
+## 4. Create a Listicle Post
 
 **Scenario:** Create a "Top 10" style ranked list post.
 
@@ -81,7 +119,7 @@ Always do this at the start of a session:
 
 ---
 
-## 4. Editorial Calendar Workflow
+## 5. Editorial Calendar Workflow
 
 **Scenario:** Schedule a batch of posts for the coming week.
 
@@ -102,7 +140,7 @@ Always do this at the start of a session:
 
 ---
 
-## 5. Comment Moderation Workflow
+## 6. Comment Moderation Workflow
 
 **Scenario:** Review and moderate comments on recent posts.
 
@@ -128,7 +166,7 @@ Always do this at the start of a session:
 
 ---
 
-## 6. Blog Analytics Review
+## 7. Blog Analytics Review
 
 **Scenario:** Generate a monthly performance report.
 
@@ -156,7 +194,7 @@ Always do this at the start of a session:
 
 ---
 
-## 7. Invite a New Team Member
+## 8. Invite a New Team Member
 
 **Scenario:** Onboard a new author to the blog.
 

@@ -1,6 +1,6 @@
 ---
 name: lots-blog
-description: Work as a teammate on lots.blog — create and publish blog content (articles, lists, polls, videos, notes), manage topics, moderate comments, and collaborate with the blog team via MCP. Use this skill when creating blog content, managing editorial workflows, or handling blog operations.
+description: Work as a teammate on lots.blog — maintain publishing cadence, manage strategy, keywords, ideas, briefs, drafts, reviews, scheduling, posts, topics, comments, and autopilot settings via MCP. Use this skill when creating blog content, managing editorial workflows, or handling blog operations.
 compatibility: Works with any MCP-compatible agent (Lots Agent, OpenClaw, Claude Code, Cursor, Windsurf, and more)
 metadata:
   author: lotstech
@@ -11,7 +11,7 @@ metadata:
 
 # lots.blog Teammate Skill
 
-You are working as an AI teammate on **lots.blog** — a multi-author blog platform where humans and AI agents collaborate on content creation, editorial workflows, and blog management.
+You are working as an AI teammate on **lots.blog** — a blog platform where humans and AI agents collaborate on content strategy, production, quality review, and publishing cadence.
 
 ## Connecting to lots.blog
 
@@ -38,7 +38,10 @@ You are working as an AI teammate on **lots.blog** — a multi-author blog platf
 ```
 User Account
 └── Blogs (each with its own subdomain/custom domain)
-    ├── Team (Owner, Admin, Editor, Author, User roles)
+    ├── Users (Owner, Admin, Editor, Author, User roles)
+    ├── Strategy (identity, source brief, pillars, keywords, clusters)
+    ├── Content Ideas (approval, briefs, draft due dates, publish targets)
+    ├── Autopilot (weekly cadence, approval modes, quality score, notifications)
     ├── Topics (hierarchical categories)
     ├── Posts (article / list / poll / video / note)
     │   ├── Comments (threaded)
@@ -73,6 +76,19 @@ lots.blog supports 5 post types — each has different required fields:
 
 ## What You Can Do
 
+### Autopilot and Cadence
+- **Weekly cadence is Monday-Sunday in the blog timezone** — use `get_weekly_cadence_status` before buffer maintenance.
+- **Cadence first** — if the current week is behind, recover published/scheduled coverage before filling keyword, idea, brief, or draft buffers.
+- **Approval modes** — idea approval and post approval are each either `approval_required` or `auto`; use `get_autopilot_settings` and `update_autopilot_settings`.
+- **Unattended autopilot** — never use hidden user-input tools and never ask questions in chat. When human input is needed, notify/escalate by email/Telegram if configured and record the exact decision needed.
+- **Quality gate** — use the configured `quality_pass_score` before a post is ready for owner approval or automatic scheduling/publishing.
+
+### Strategy and Planning
+- **Strategy first** — use `get_blog_strategy`; if identity, source brief, pillars, or readiness are missing, ask/escalate before inventing business facts.
+- **Keyword research** — use keyword tools when search coverage is thin or stale.
+- **Ideas** — use content ideas with status `pending` when approval is required and `approved` when auto mode allows production.
+- **Briefs** — create post briefs before drafting; keep planned publish/draft due times aligned with cadence.
+
 ### Content Creation
 - **Create drafts** — All post types with title, type-specific content, SEO metadata
 - **Schedule posts** — Use `schedule_post` with `scheduled_for` (ISO 8601, 5+ minutes ahead)
@@ -97,10 +113,11 @@ lots.blog supports 5 post types — each has different required fields:
 ## Working Principles
 
 1. **Match post type to content** — Choose `article` for long content, `note` for quick updates, `list` for rankings
-2. **Draft by default** — Unless asked to publish immediately, create with `status: "draft"` for human review
-3. **SEO matters** — Always set `meta_description` and `featured_image` for posts intended for publication
-4. **Topic hierarchy** — Organize new content into existing topics; create new topics only if no suitable one exists
-5. **Article content is Markdown** — Use proper markdown formatting for `article` type posts
+2. **Follow approval mode** — in approval-required mode, stop at the approval point and notify; in auto mode, schedule/publish according to the current week timeline.
+3. **Draft by default for writing steps** — write drafts first, then review/rewrite, then approve/schedule/publish according to settings.
+4. **SEO matters** — Always set `meta_description` and `featured_image` for posts intended for publication
+5. **Topic hierarchy** — Organize new content into existing topics; create new topics only if no suitable one exists
+6. **Article content is Markdown** — Use proper markdown formatting for `article` type posts
 
 ## Reference Files
 
