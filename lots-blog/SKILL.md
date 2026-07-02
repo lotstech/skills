@@ -81,7 +81,7 @@ lots.blog supports 5 post types — each has different required fields:
 - **Cadence first** — if the current week is behind, recover published/scheduled coverage before filling keyword, idea, brief, or draft buffers.
 - **Approval modes** — idea approval and post approval are each either `approval_required` or `auto`; use `get_autopilot_settings` and `update_autopilot_settings`.
 - **Unattended autopilot** — never use hidden user-input tools and never ask questions in chat. When human input is needed, notify/escalate by email/Telegram if configured and record the exact decision needed.
-- **Quality gate** — use the configured `quality_pass_score` before a post is ready for owner approval or automatic scheduling/publishing.
+- **Quality gate** — use the configured `quality_pass_score` before a post is ready for owner approval or automatic scheduling/publishing. A post is not reviewed until `save_content_review` succeeds and returns a dashboard `quality_check`; never claim a draft passed from memory-only analysis.
 
 ### Strategy and Planning
 - **Strategy first** — use `get_blog_strategy`; if identity, source brief, pillars, or readiness are missing, ask/escalate before inventing business facts.

@@ -49,7 +49,7 @@ All tools available via `https://api.lots.blog/mcp`. Tools are called by their *
 | `update_post_brief` | Edit a writing brief | `blog_id`, `brief_id`, fields |
 | `get_production_queue` | Inspect ideas, briefs, due drafts, draft-ready items, scheduled posts, and blockers | `blog_id` |
 | `update_production_status` | Move an idea through idea/brief/drafting/draft_ready/reviewing/scheduled/published states | `blog_id`, `content_idea_id`, statuses |
-| `save_content_review` | Save AI review score, findings, and readiness status | `blog_id`, `post_id`, review fields |
+| `save_content_review` | Save AI review score, findings, readiness status, and the dashboard-visible post quality check | `blog_id`, `post_id`, review fields |
 | `get_content_reviews` | Retrieve saved reviews for a post | `blog_id`, `post_id` |
 | `get_autopilot_settings` | Read autopilot enabled state, cadence, timezone, approval modes, quality score, buffers, notifications | `blog_id` |
 | `update_autopilot_settings` | Change autopilot settings | `blog_id`, settings fields |
