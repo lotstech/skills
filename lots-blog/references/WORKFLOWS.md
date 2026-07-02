@@ -41,7 +41,7 @@ Always do this at the start of a session:
 
 4. If current week is behind:
    a. Use existing draft-ready posts first.
-   b. If drafts need review, run quality review/rewrite until quality_pass_score is met. Every review must be persisted with `save_content_review`; do not count a draft as reviewed unless the tool returns a dashboard `quality_check`.
+   b. If drafts need review, run quality review/rewrite until quality_pass_score is met. Every review must use the same 19-item dashboard checklist and be persisted with `save_content_review`; do not count a draft as reviewed unless the tool returns a dashboard `quality_check`.
    c. If post_approval_mode="approval_required", notify owner with ready drafts and schedule/publish choices.
    d. If post_approval_mode="auto", publish/schedule to cover the current week.
       - Early week: schedule remaining cadence across the week.
