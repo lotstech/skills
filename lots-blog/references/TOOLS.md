@@ -62,6 +62,7 @@ Cadence rule: always use `get_weekly_cadence_status` before maintaining buffers.
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `blog_id` | ✅ | UUID of the target blog |
+| `content_idea_id` | — | Strongly recommended when drafting from a saved content idea or post brief. Links the new post to the idea atomically and prevents duplicate drafts for the same idea. |
 | `title` | ✅ | Post title (all types) |
 | `post_type` | ✅ | `article`, `list`, `poll`, `video`, or `note` |
 | `status` | — | `draft` (default), `scheduled`, `published` |

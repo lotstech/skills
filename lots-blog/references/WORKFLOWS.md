@@ -69,6 +69,7 @@ Autopilot sessions are unattended. Never call hidden user-input tools and never 
 
 2. create_post(
      blog_id,
+     content_idea_id=<source_content_idea_id_if_using_saved_idea_or_brief>,
      title="How to [Topic]: A Complete Guide",
      post_type="article",
      content="# Introduction\n\n...\n\n## Section 1\n\n...",
@@ -79,6 +80,8 @@ Autopilot sessions are unattended. Never call hidden user-input tools and never 
      reading_time=5
    )
    → Get post_id
+
+   When drafting from a saved content idea or post brief, always pass `content_idea_id` in the create call. This links the draft back to the idea immediately and removes it from the brief-ready queue. If the tool reports that the idea already has a linked post, use the existing draft instead of creating another.
 
 3. [Human reviews draft]
 
