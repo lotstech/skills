@@ -95,7 +95,7 @@ a draft. `posted` is rejected because publishing must use the validated product 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `get_approval_status` | Get current approval status of a post | `post_id`, `workspace_id` |
-| `set_social_post_approval` | Change approval status; teammate posts require a fresh passing independent review | `post_id` (required), `workspace_id` (required), `action` (required), `comment?` |
+| `set_social_post_approval` | Change approval status; teammate posts require a fresh passing independent review and every post account is verified against the immutable brand | `post_id` (required), `workspace_id` (required), `brand_id` (required for teammate use), `action` (required), `comment?` |
 
 ### Approval Actions
 

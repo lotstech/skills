@@ -69,6 +69,9 @@ immutable for the whole workflow.
   Use low-level post tools only for a user-requested one-artifact edit or diagnostics.
 - Every mutation must include the selected `brand_id` when supported. Never mix
   connected accounts from different brands, even when the same user owns both.
+- Web, email, and Telegram are only channels into this same contract. If an
+  email or Telegram request is ambiguous and the owner has multiple brands, ask
+  one concise brand-selection question and perform zero mutations until answered.
 - Treat server scope, review, threshold, retry, approval, and validation errors as
   authoritative. Never route around them.
 - Report outcomes and next actions, not tool transcripts.
@@ -101,7 +104,7 @@ immutable for the whole workflow.
 
 ### Team Collaboration
 - **Comments** — Add internal comments on posts for team discussion
-- **Approval workflow** — Request approval (`request_approval`), then managers approve or reject with optional comment
+- **Approval workflow** — Request approval (`request_approval`) with the immutable `brand_id`, then managers approve or reject with optional comment
 
 ### Analytics
 - **Post analytics** — Get engagement metrics (likes, comments, shares, impressions) for published posts

@@ -92,6 +92,7 @@ normal teammate cycle.
 4. Only after a fresh pass: set_social_post_approval(
      post_id,
      workspace_id,
+     brand_id,
      action="request_approval",
      comment="Requesting approval for this week's product update post"
    )
