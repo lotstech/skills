@@ -1,10 +1,10 @@
 ---
 name: lots-social
-description: Work as a teammate on lots.social — create social media posts, schedule content, manage multi-platform publishing, review team posts, and analyze performance via MCP. Use this skill when collaborating on social media management, content strategy, or team content workflows.
+description: Operate LotsSocial as a brand-scoped social teammate through its deterministic plan, write, independent review, rewrite, approval, scheduling, and analytics workflows. Use for external-agent LotsSocial work; the built-in LotsSocial agent uses native instructions instead.
 compatibility: Works with any MCP-compatible agent (Lots Agent, OpenClaw, Claude Code, Cursor, Windsurf, and more)
 metadata:
   author: lotstech
-  version: "1.0"
+  version: "2.0"
   platform: lots.social
   mcp_endpoint: https://api.lots.social/mcp
 ---
@@ -55,14 +55,43 @@ When you connect, you join a **Workspace** with a specific role:
 - **Manager** — Can approve/reject posts, manage team
 - **Creator** — Can create posts, request approval; cannot approve own posts
 
-Always call `list_workspaces` first to get your workspace context and understand which platforms are connected.
+For an interactive external-agent session, resolve the workspace and ask the user to
+select one brand when it is not already explicit. Once selected, keep the brand
+immutable for the whole workflow.
+
+## Contract: `lotssocial-teammate-v2`
+
+- Prefer `run_social_teammate_workflow` for normal autonomous work. It freezes the
+  immutable brand scope and moves first-class content items through bounded planning,
+  writing, an independent review, at most two rewrites, approval eligibility, and
+  deterministic cadence scheduling.
+- Do not recreate that pipeline with an open-ended sequence of low-level tool calls.
+  Use low-level post tools only for a user-requested one-artifact edit or diagnostics.
+- Every mutation must include the selected `brand_id` when supported. Never mix
+  connected accounts from different brands, even when the same user owns both.
+- Treat server scope, review, threshold, retry, approval, and validation errors as
+  authoritative. Never route around them.
+- Report outcomes and next actions, not tool transcripts.
 
 ## What You Can Do
+
+### Autopilot and Brand Operations
+- **Brand context is the source of truth** — autopilot is scoped to a brand and its connected accounts, identity, pillars, profile strategies, recent posts, analytics, media, and saved settings.
+- **No fixed check-in questions** — derive questions and suggestions from the actual brand. A local coffee shop, creator, startup, agency, and enterprise SaaS account need different language, asks, formats, and proof.
+- **Do not invent fresh reality** — never fabricate daily specials, founder lessons, shipped features, customer wins, screenshots, videos, events, local photos, or timely business facts. If the detail is missing, create a content request or escalate.
+- **Unattended autopilot** — never ask questions in plain chat and never use hidden user-input tools. If human input, media, or approval is needed, record the exact request and escalate through configured dashboard/email/Telegram notification behavior.
+- **Format strategy is dynamic** — choose text, image, video, short video/reels/shorts, carousel, thread, screenshot, link, story, or other native formats from brand context, connected platforms, current platform playbooks/trends, and available proof/media. Do not assume a static format always works.
+- **Video matters but must be real** — when short-form video would likely outperform text/image, recommend concrete recordable variants for the brand. If the user cannot provide video and removes it, record that gap in review/insights instead of pretending the strategy was followed.
+- **Images and media** — follow autopilot settings. If AI image generation is enabled and the agent/tooling can generate and upload, do it. If generation is off but prompt fallback is enabled, provide a precise copyable prompt and practical upload/use instructions. Prefer real screenshots/photos/footage when proof or authenticity matters.
+- **Approval modes** — draft/review by default. Schedule only when settings allow it. Do not publish from unattended autopilot unless the product explicitly supports and authorizes that path.
+- **Independent quality gate** — writing, review, and rewrite are separate bounded executions. Never ask the owner to review a first draft that has not received a fresh passing independent review at the configured threshold.
+- **Ask once, in cards** — create a structured request only for an owner-only fact, media item, or decision that blocks a specific item. Use a short question, short why, 2–4 honest options when applicable, “Something else,” “I don’t have this,” and an example for free text. Never recreate an equivalent open, known, unavailable, or declined request.
+- **Continue safe work** — one blocked content item must not stop unblocked items for the same brand.
 
 ### Content Creation
 - **Draft posts** — Create post drafts with caption, media, links, and platform targets
 - **Schedule posts** — Set a future `scheduled_time` (ISO 8601, at least 5 minutes ahead)
-- **Publish immediately** — Create posts with `type: "posted"` to publish right away
+- **Publish through the product pipeline** — Direct MCP post creation produces drafts or scheduled posts. Immediate publishing must use LotsSocial’s validated publishing workflow; never fake a posted state.
 - **Multi-platform** — Post to multiple connected accounts simultaneously via `platforms` array
 
 ### Content Management
@@ -85,11 +114,11 @@ Always call `list_workspaces` first to get your workspace context and understand
 
 ## Working Principles
 
-1. **Draft first, publish second** — Unless explicitly asked to publish immediately, save as draft so humans can review
-2. **Check connected accounts** — Call `list_connected_accounts` to know which platforms are available before creating posts
-3. **Respect the approval workflow** — If the workspace uses approval flows, call `update_approval_status` with `request_approval` after creating a post, don't self-approve
+1. **Use the supervisor first** — For normal teammate work call `run_social_teammate_workflow`; do not hand-orchestrate plan → write → review → rewrite
+2. **Freeze one brand** — Resolve one brand and its allowed account IDs before any low-level action; reject mixed-brand batches
+3. **Respect the quality-backed approval workflow** — Request approval only after the server reports a fresh independent pass; never self-approve
 4. **Platform character limits** — Twitter/X: 280 chars, Instagram: 2,200 chars, LinkedIn: 3,000 chars. Validate caption length per platform
-5. **Media must be pre-uploaded** — Use `list_media` to find available media UUIDs; you cannot upload directly via MCP
+5. **Media handling follows tools/settings** — Use available media/upload/image-generation tools when present. If only MCP media listing is available, use `list_media` to find existing media UUIDs and ask/escalate for missing uploads.
 
 ## Reference Files
 

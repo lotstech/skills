@@ -4,6 +4,16 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 
 ---
 
+## Teammate Workflow
+
+| Tool Slug | Description | Key Parameters |
+|-----------|-------------|----------------|
+| `run_social_teammate_workflow` | Preferred high-level v2 workflow: freezes one brand scope and deterministically plans, writes, independently reviews, rewrites at most twice, prepares approval, and schedules approved work | `brand_id`, `workspace_id?`, `idempotency_key?`, `max_transitions?`, `max_new_items?`, `shadow?` |
+| `evaluate_social_autopilot` | Read-only health/next-action inspection for agents by default | `brand_id`, `workspace_id?`, `source="agent"` |
+| `create_social_content_request` | Structured, deduplicated owner question with open-request budget | `brand_id`, `question`, `answer_type`, `options?`, `example_answer?`, `fact_keys?`, `blocking_item_ids?` |
+
+---
+
 ## Workspaces
 
 | Tool Slug | Description | Key Parameters |
@@ -22,7 +32,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 |-----------|-------------|----------------|
 | `list_posts` | List posts filtered by type (draft/scheduled/posted) | `type` (required), `workspace_id?`, `created_by?`, `limit?`, `offset?` |
 | `get_post` | Get complete post details including media, platforms, and logs | `post_id` |
-| `create_post` | Create a draft, scheduled, or immediately published post | See below |
+| `create_post` | Create a draft or scheduled post with enforced brand/account scope | See below |
 | `update_post` | Update draft or scheduled post (cannot edit published) | `post_id` (required), `caption?`, `platforms?`, `media_ids?`, `scheduled_time?`, `title?`, `link?` |
 | `delete_post` | Permanently delete a post | `post_id` |
 | `cancel_scheduled_post` | Cancel a scheduled post and revert to draft | `post_id` |
@@ -32,15 +42,17 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `caption` | ✅ | Main text content (max 5000 chars; platform limits apply) |
-| `type` | — | `"draft"` (default), `"scheduled"`, or `"posted"` |
-| `platforms` | Required for scheduled/posted | Array of connected account UUIDs |
+| `brand_id` | Required for teammate use | Selected immutable brand UUID |
+| `type` | — | `"draft"` (default) or `"scheduled"` |
+| `platforms` | ✅ | Array of connected account UUIDs from the selected brand |
 | `scheduled_time` | Required if type=scheduled | ISO 8601 datetime, at least 5 min in future |
 | `media_ids` | — | Array of pre-uploaded media UUIDs (max 10) |
 | `workspace_id` | — | UUID if this is a team workspace post |
 | `title` | — | Required for YouTube/LinkedIn posts (max 100 chars) |
 | `link` | — | Optional URL to include |
 
-**Auto-type logic:** If `scheduled_time` provided → `scheduled`. If `platforms` provided (no schedule) → `posted`. Otherwise → `draft`.
+**Type logic:** If `scheduled_time` is provided the post is scheduled; otherwise it is
+a draft. `posted` is rejected because publishing must use the validated product pipeline.
 
 ---
 
@@ -83,7 +95,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `get_approval_status` | Get current approval status of a post | `post_id`, `workspace_id` |
-| `update_approval_status` | Change approval status | `post_id` (required), `workspace_id` (required), `action` (required), `comment?` |
+| `set_social_post_approval` | Change approval status; teammate posts require a fresh passing independent review | `post_id` (required), `workspace_id` (required), `action` (required), `comment?` |
 
 ### Approval Actions
 

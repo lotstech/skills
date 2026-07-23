@@ -4,26 +4,45 @@ Practical workflow examples for AI agents working on lots.social.
 
 ---
 
-## 1. Session Start — Orienting Yourself
+## 1. Session Start — Select One Brand
 
-Always do this at the start of a session:
+When the request does not already supply a Brand ID:
 
 ```
 1. list_workspaces
    → Get workspace_id and your role
 
 2. list_connected_accounts(workspace_id)
-   → Know which platforms are available and their account UUIDs
+   → Resolve the accounts for exactly one selected brand
 
-3. list_media(workspace_id)
-   → Know what media assets are available
+3. Keep brand_id + allowed account IDs immutable for the operation
 ```
 
 ---
 
-## 2. Create and Schedule a Post
+## 2. Normal Teammate Run
 
-**Scenario:** Create a post and schedule it for a specific time across multiple platforms.
+**Scenario:** The owner wants the teammate to plan and prepare the next useful posts.
+
+```
+run_social_teammate_workflow(
+  brand_id="<selected_brand_id>",
+  workspace_id="<workspace_id>",
+  source="agent",
+  idempotency_key="<stable-request-key>"
+)
+→ Returns scoped outcome counts and exact posts/questions needing attention.
+```
+
+This is the default. It performs bounded planning, writing, independent review,
+at most two rewrites, approval readiness, and eligible cadence scheduling.
+
+---
+
+## 3. Explicit One-Post Edit
+
+**Scenario:** The owner explicitly asks to create or edit one artifact outside the
+normal teammate cycle.
 
 ```
 1. list_connected_accounts(workspace_id)
@@ -34,13 +53,13 @@ Always do this at the start of a session:
 
 3. create_post(
      caption="Your post text here... #hashtag",
-     type="scheduled",
+     type="draft",
+     brand_id="<selected_brand_id>",
      platforms=["<twitter_account_id>", "<instagram_account_id>"],
-     scheduled_time="2026-02-20T10:00:00Z",
      media_ids=["<image_uuid>"],    // optional
      workspace_id="<workspace_id>"
    )
-   → Post saved, will auto-publish at scheduled_time
+   → Draft saved. Run review_social_post before requesting approval.
 ```
 
 **Platform caption limits:**
@@ -51,7 +70,7 @@ Always do this at the start of a session:
 
 ---
 
-## 3. Draft → Review → Publish Workflow (Team Approval)
+## 4. Draft → Independent Review → Approval
 
 **Scenario:** Agent creates content, manager reviews before publishing.
 
@@ -64,10 +83,13 @@ Always do this at the start of a session:
    )
    → Get post_id
 
-2. add_comment(post_id, "Draft ready for review. Key messages: [...]", workspace_id)
-   → Leave context for the reviewer
+2. review_social_post(post_id, brand_id, workspace_id)
+   → Fresh independent score and checklist
 
-3. update_approval_status(
+3. If it fails: rewrite_social_post(post_id, brand_id, workspace_id)
+   → Re-review. Stop after two failed automatic rewrites.
+
+4. Only after a fresh pass: set_social_post_approval(
      post_id,
      workspace_id,
      action="request_approval",
@@ -75,13 +97,14 @@ Always do this at the start of a session:
    )
    → Status changes to "pending"; manager gets notified
 
-4. [Manager reviews and responds]
+5. [Manager reviews and responds]
 
-5. get_approval_status(post_id, workspace_id)
+6. get_approval_status(post_id, workspace_id)
    → Check if approved or rejected
 
-6a. If approved:
-    [Manager or agent publishes] or post gets published per workflow
+7a. If approved:
+    run_social_teammate_workflow(brand_id, workspace_id)
+    → Code chooses a valid cadence slot when settings allow scheduling.
 
 6b. If rejected:
     list_comments(post_id)  → read rejection reason
@@ -92,26 +115,14 @@ Always do this at the start of a session:
 
 ---
 
-## 4. Publish Immediately
+## 5. Publish Immediately
 
-**Scenario:** Publish a post right now without drafting.
-
-```
-1. list_connected_accounts(workspace_id)
-   → Get account UUIDs
-
-2. create_post(
-     caption="Breaking: [announcement text]",
-     type="posted",
-     platforms=["<account_id>"],
-     workspace_id="<workspace_id>"
-   )
-   → Published immediately. No undo — confirm before calling.
-```
+MCP post creation cannot fake a published state. Create a draft, pass review, obtain
+approval, and use LotsSocial’s validated publishing UI/pipeline for “publish now.”
 
 ---
 
-## 5. Analytics Report Workflow
+## 6. Analytics Report Workflow
 
 **Scenario:** Generate a performance summary for recent posts.
 
@@ -139,7 +150,7 @@ Always do this at the start of a session:
 
 ---
 
-## 6. Reschedule a Post
+## 7. Reschedule a Post
 
 **Scenario:** A scheduled post needs to go out at a different time.
 
@@ -162,7 +173,7 @@ Always do this at the start of a session:
 
 ---
 
-## 7. Account Health Check
+## 8. Account Health Check
 
 **Scenario:** Check all connected accounts for token expiration issues.
 
