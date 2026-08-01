@@ -20,12 +20,24 @@ When the request does not already supply a Brand ID:
 
 ---
 
-## 2. Normal Teammate Run
+## 2. Campaign Setup and Normal Teammate Run
 
 **Scenario:** The owner wants the teammate to plan and prepare the next useful posts.
 
 ```
-run_social_teammate_workflow(
+1. get_business_profile + get_social_direction + get_social_campaign
+   → If no Social Direction, help save one concise version.
+   → If no active campaign, recommend a focused campaign or Always-on presence;
+     do not start routine production.
+
+2. For a new campaign:
+   create_social_campaign(...)
+   assess_social_campaign_readiness(campaign_id)
+   → Answer at most two real blockers, then re-assess.
+   build_social_campaign_plan(campaign_id)
+   activate_social_campaign(campaign_id) // only with owner confirmation
+
+3. run_social_teammate_workflow(
   brand_id="<selected_brand_id>",
   workspace_id="<workspace_id>",
   source="agent",
@@ -34,8 +46,12 @@ run_social_teammate_workflow(
 → Returns scoped outcome counts and exact posts/questions needing attention.
 ```
 
-This is the default. It performs bounded planning, writing, independent review,
+This is the default only when a campaign is active. It creates the next rolling
+content sprint (maximum seven days), then performs writing, independent review,
 at most two rewrites, approval readiness, and eligible cadence scheduling.
+
+At campaign closure, refresh the dated AI assessment, save the owner reflection
+separately, then end the campaign. Continue reading analytics dynamically later.
 
 ---
 

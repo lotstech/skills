@@ -4,7 +4,7 @@ description: Operate LotsSocial as a brand-scoped social teammate through its de
 compatibility: Works with any MCP-compatible agent (Lots Agent, OpenClaw, Claude Code, Cursor, Windsurf, and more)
 metadata:
   author: lotstech
-  version: "2.0"
+  version: "3.0"
   platform: lots.social
   mcp_endpoint: https://api.lots.social/mcp
 ---
@@ -59,7 +59,7 @@ For an interactive external-agent session, resolve the workspace and ask the use
 select one brand when it is not already explicit. Once selected, keep the brand
 immutable for the whole workflow.
 
-## Contract: `lotssocial-teammate-v2`
+## Contract: `lotssocial-teammate-v3`
 
 - Prefer `run_social_teammate_workflow` for normal autonomous work. It freezes the
   immutable brand scope and moves first-class content items through bounded planning,
@@ -79,12 +79,19 @@ immutable for the whole workflow.
 ## What You Can Do
 
 ### Autopilot and Brand Operations
-- **Brand context is the source of truth** — autopilot is scoped to a brand and its connected accounts, identity, pillars, profile strategies, recent posts, analytics, media, and saved settings.
+- **One source for each decision** — Business Profile owns durable facts; Social Direction owns the simple long-term objective, primary audience, desired action, and constraints; the active Campaign owns the time-bound goal; its immutable Plan version owns account purpose, platform-specific audience, cadence, formats, and one free-form additional-notes field per account.
+- **Routine production requires one active campaign** — without one, recommend a focused campaign or a one-step Always-on presence campaign from the saved Social Direction. An explicitly requested standalone draft is allowed, but never silently turn it into routine production.
+- **Discover before planning** — run campaign readiness after creating a draft campaign. Derive what is missing from actual facts, media, past outcomes, and the brief; ask at most two campaign-specific questions. Do not use a fixed questionnaire.
+- **Seven-day content sprints** — each normal teammate plan covers at most the next rolling seven days or the shorter remaining campaign window. Preserve every sprint and its generated items.
+- **Immutable post context** — every campaign post keeps its exact Campaign, Plan version, Social Direction version, content sprint, and platform-playbook version. Review and rewrite against that context, never whatever is current later.
+- **Separate hindsight from live numbers** — campaign analytics remain dynamic; dated AI assessments and the owner’s reflection are separate, durable records.
+- **Check-ins are bounded** — respect one or at most two owner-selected daily check-in windows. A check-in is a context evaluation, not a mandatory notification or publishing time.
 - **No fixed check-in questions** — derive questions and suggestions from the actual brand. A local coffee shop, creator, startup, agency, and enterprise SaaS account need different language, asks, formats, and proof.
 - **Do not invent fresh reality** — never fabricate daily specials, founder lessons, shipped features, customer wins, screenshots, videos, events, local photos, or timely business facts. If the detail is missing, create a content request or escalate.
 - **Unattended autopilot** — never ask questions in plain chat and never use hidden user-input tools. If human input, media, or approval is needed, record the exact request and escalate through configured dashboard/email/Telegram notification behavior.
-- **Format strategy is dynamic** — choose text, image, video, short video/reels/shorts, carousel, thread, screenshot, link, story, or other native formats from brand context, connected platforms, current platform playbooks/trends, and available proof/media. Do not assume a static format always works.
-- **Video matters but must be real** — when short-form video would likely outperform text/image, recommend concrete recordable variants for the brand. If the user cannot provide video and removes it, record that gap in review/insights instead of pretending the strategy was followed.
+- **Platform playbooks are evidence-graded** — obey dated official-policy guidance. Treat observed practices and experiments as recommendations, not guarantees. Use the exact playbook version attached to the campaign plan/post.
+- **Format choice is dynamic** — choose text, image, video, short video/reels/shorts, carousel, thread, screenshot, link, story, or another native format from the active plan, playbook, available proof/media, and current context.
+- **Video matters but must be real** — when short-form video would likely outperform text/image, recommend concrete recordable variants for the brand. If the user cannot provide video and removes it, record that gap in review/insights instead of pretending the campaign plan was followed.
 - **Images and media** — follow autopilot settings. If AI image generation is enabled and the agent/tooling can generate and upload, do it. If generation is off but prompt fallback is enabled, provide a precise copyable prompt and practical upload/use instructions. Prefer real screenshots/photos/footage when proof or authenticity matters.
 - **Approval modes** — draft/review by default. Schedule only when settings allow it. Do not publish from unattended autopilot unless the product explicitly supports and authorizes that path.
 - **Independent quality gate** — writing, review, and rewrite are separate bounded executions. Never ask the owner to review a first draft that has not received a fresh passing independent review at the configured threshold.
