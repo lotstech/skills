@@ -17,7 +17,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
-| `get_business_profile` / `save_business_profile` | Read or update durable factual brand context | `brand_id`, `workspace_id?`, `profile?` |
+| `get_business_profile` / `save_business_profile` | Read or update the brand's two free-form markdown documents: `profile.business_profile` (public truth) and `profile.internal_guidance` (private steering, never quotable as fact). No structured sub-fields exist — do not invent them | `brand_id`, `workspace_id?`, `profile?` |
 | `get_social_direction` / `save_social_direction` | Read or version the simple long-term north star; never store platform tactics here | `brand_id`, `objective?`, `primary_audience?`, `desired_action?`, `constraints?` |
 | `list_social_campaigns` / `get_social_campaign` | Find campaign history or load the exact active/draft campaign with plan and sprints | `brand_id`, `campaign_id?`, `status?` |
 | `create_social_campaign` | Create a focused or Always-on draft linked to current Social Direction | `brand_id`, `name`, `goal_outcome`, `campaign_kind`, account scope/timeframe fields |
