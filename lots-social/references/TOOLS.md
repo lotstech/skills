@@ -8,6 +8,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
+| `get_social_operating_brief` | Canonical teammate-v3 instructions, readiness, and exact brand Campaign/Plan context; call first after choosing one brand | `brand_id`, `workspace_id?` |
 | `run_social_teammate_workflow` | Preferred high-level v3 workflow: requires one active campaign, creates a rolling sprint of at most seven days, freezes exact direction/plan/playbook context, writes, independently reviews, rewrites at most twice, prepares approval, and schedules approved work | `brand_id`, `workspace_id?`, `idempotency_key?`, `max_transitions?`, `max_new_items?`, `shadow?` |
 | `evaluate_social_autopilot` | Read-only health/next-action inspection for agents by default | `brand_id`, `workspace_id?`, `source="agent"` |
 | `create_social_content_request` | Structured, deduplicated owner question with open-request budget | `brand_id`, `question`, `answer_type`, `options?`, `example_answer?`, `fact_keys?`, `blocking_item_ids?` |
@@ -21,9 +22,11 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | `list_social_campaigns` / `get_social_campaign` | Find campaign history or load the exact active/draft campaign with plan and sprints | `brand_id`, `campaign_id?`, `status?` |
 | `create_social_campaign` | Create a focused or Always-on draft linked to current Social Direction | `brand_id`, `name`, `goal_outcome`, `campaign_kind`, account scope/timeframe fields |
 | `assess_social_campaign_readiness` | Bounded intelligent discovery before planning; at most two requirements | `campaign_id`, `business_note?` |
+| `assess_social_campaign_plan_health` | Dated reassessment for an active Always-on campaign; preserves original discovery and recommends a new Plan version only when warranted | `campaign_id`, `business_note?` |
 | `build_social_campaign_plan` / `save_social_campaign_plan` | Build or save the canonical account-level plan after readiness | `campaign_id`, `business_note?`, `plan?` |
 | `activate_social_campaign` | Activate a ready campaign; ends the brand’s previous active campaign | `campaign_id` |
-| `refresh_social_campaign_report` | Save a dated AI assessment while analytics remain live | `campaign_id` |
+| `get_social_campaign_results` | Recalculate exact live campaign results; remains dynamic after campaign end | `campaign_id`, `refresh?` |
+| `generate_social_campaign_retrospective` | Save a dated evidence-bound AI assessment while analytics remain live | `campaign_id`, `final?` |
 | `save_campaign_owner_reflection` | Save the owner’s own conclusion separately | `campaign_id`, `owner_reflection` |
 | `end_social_campaign` | End only after the owner explicitly confirms closure | `campaign_id` |
 | `get_platform_playbook` | Read versioned official/observed/experimental guidance | `platform`, `version?` |
@@ -66,6 +69,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | `workspace_id` | — | UUID if this is a team workspace post |
 | `title` | — | Required for YouTube/LinkedIn posts (max 100 chars) |
 | `link` | — | Optional URL to include |
+| `standalone` | — | Set `true` only for an explicitly requested one-off draft outside the active campaign; cannot be combined with `campaign_id` |
 
 **Type logic:** If `scheduled_time` is provided the post is scheduled; otherwise it is
 a draft. `posted` is rejected because publishing must use the validated product pipeline.
@@ -87,11 +91,12 @@ a draft. `posted` is rejected because publishing must use the validated product 
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
+| `upload_media` | Store a generated/supplied image in the LotsSocial media library with searchable context | `image_url` or `image_base64`, `workspace_id?`, `description?`, `alt_text?` |
 | `list_media` | List uploaded media files (images and videos) | `workspace_id?`, `type?` (image/video), `limit?` |
 | `get_media_details` | Get file details, usage stats, and posts using this media | `media_id` |
 | `delete_media` | Delete a media file (only if not used in scheduled/published posts) | `media_id` |
 
-> **Note:** Media cannot be uploaded via MCP. Use the lots.social web app to upload files, then reference their UUIDs in `create_post`.
+> Use `upload_media` when the generated/supplied asset is available to the agent. Otherwise ask the owner to upload it in LotsSocial, then locate it with `list_media` and reference its UUID in `create_post`.
 
 ---
 

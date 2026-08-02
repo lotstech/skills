@@ -61,6 +61,9 @@ immutable for the whole workflow.
 
 ## Contract: `lotssocial-teammate-v3`
 
+- After freezing one brand, call `get_social_operating_brief` first. Its returned
+  contract version, readiness, exact Social Direction/Campaign/Plan context, and
+  instructions are canonical for both built-in and external agents.
 - Prefer `run_social_teammate_workflow` for normal autonomous work. It freezes the
   immutable brand scope and moves first-class content items through bounded planning,
   writing, an independent review, at most two rewrites, approval eligibility, and
@@ -79,9 +82,10 @@ immutable for the whole workflow.
 ## What You Can Do
 
 ### Autopilot and Brand Operations
-- **One source for each decision** — Business Profile owns durable facts; Social Direction owns the simple long-term objective, primary audience, desired action, and constraints; the active Campaign owns the time-bound goal; its immutable Plan version owns account purpose, platform-specific audience, cadence, formats, and one free-form additional-notes field per account.
+- **One source for each decision** — Business Profile owns durable facts; a confirmed Social Direction owns the simple long-term objective, primary audience, desired action, and constraints; the active Campaign owns the time-bound goal; its immutable Plan version owns account purpose, platform-specific audience, cadence, formats, and one free-form additional-notes field per account. Imported or agent-drafted directions remain unconfirmed until the owner explicitly confirms or rewrites them.
 - **Routine production requires one active campaign** — without one, recommend a focused campaign or a one-step Always-on presence campaign from the saved Social Direction. An explicitly requested standalone draft is allowed, but never silently turn it into routine production.
 - **Discover before planning** — run campaign readiness after creating a draft campaign. Derive what is missing from actual facts, media, past outcomes, and the brief; ask at most two campaign-specific questions. Do not use a fixed questionnaire.
+- **Always-on reassessment preserves history** — for an active Always-on campaign, use `assess_social_campaign_plan_health`. Never rerun or overwrite its original discovery; save a new Plan version only when the dated assessment warrants change.
 - **Seven-day content sprints** — each normal teammate plan covers at most the next rolling seven days or the shorter remaining campaign window. Preserve every sprint and its generated items.
 - **Immutable post context** — every campaign post keeps its exact Campaign, Plan version, Social Direction version, content sprint, and platform-playbook version. Review and rewrite against that context, never whatever is current later.
 - **Separate hindsight from live numbers** — campaign analytics remain dynamic; dated AI assessments and the owner’s reflection are separate, durable records.

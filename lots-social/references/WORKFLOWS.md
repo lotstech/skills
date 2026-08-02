@@ -16,6 +16,9 @@ When the request does not already supply a Brand ID:
    → Resolve the accounts for exactly one selected brand
 
 3. Keep brand_id + allowed account IDs immutable for the operation
+
+4. get_social_operating_brief(brand_id, workspace_id)
+   → Follow its canonical v3 instructions, readiness, and exact context.
 ```
 
 ---
@@ -25,8 +28,9 @@ When the request does not already supply a Brand ID:
 **Scenario:** The owner wants the teammate to plan and prepare the next useful posts.
 
 ```
-1. get_business_profile + get_social_direction + get_social_campaign
+1. get_social_operating_brief
    → If no Social Direction, help save one concise version.
+   → If the direction is imported/agent-drafted, ask the owner to confirm or rewrite it.
    → If no active campaign, recommend a focused campaign or Always-on presence;
      do not start routine production.
 
@@ -50,8 +54,9 @@ This is the default only when a campaign is active. It creates the next rolling
 content sprint (maximum seven days), then performs writing, independent review,
 at most two rewrites, approval readiness, and eligible cadence scheduling.
 
-At campaign closure, refresh the dated AI assessment, save the owner reflection
-separately, then end the campaign. Continue reading analytics dynamically later.
+At campaign closure, call `generate_social_campaign_retrospective`, save the owner
+reflection separately, then call `end_social_campaign`. Continue reading live results
+later with `get_social_campaign_results`.
 
 ---
 
@@ -71,6 +76,7 @@ normal teammate cycle.
      caption="Your post text here... #hashtag",
      type="draft",
      brand_id="<selected_brand_id>",
+     standalone=true,
      platforms=["<twitter_account_id>", "<instagram_account_id>"],
      media_ids=["<image_uuid>"],    // optional
      workspace_id="<workspace_id>"
