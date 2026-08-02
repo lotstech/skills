@@ -124,7 +124,7 @@ immutable for the whole workflow.
 
 ### Account Management
 - **Connected accounts** — List and monitor connected social media accounts
-- **Token refresh** — Refresh expiring OAuth tokens to prevent disconnections
+- **Connection health** — Inspect account status and direct owners to the web app when re-authorization is required; provider token refresh is automatic and product-owned
 
 ## Working Principles
 
