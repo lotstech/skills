@@ -49,14 +49,14 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
-| `list_posts` | List posts filtered by type (draft/scheduled/posted) | `type` (required), `workspace_id?`, `created_by?`, `limit?`, `offset?` |
-| `get_post` | Get complete post details including media, platforms, and logs | `post_id` |
-| `create_post` | Create a draft or scheduled post with enforced brand/account scope | See below |
-| `update_post` | Update draft or scheduled post (cannot edit published) | `post_id` (required), `caption?`, `platforms?`, `media_ids?`, `scheduled_time?`, `title?`, `link?` |
-| `delete_post` | Permanently delete a post | `post_id` |
+| `list_social_posts` | List posts filtered by type (draft/scheduled/posted) | `type` (required), `workspace_id?`, `created_by?`, `limit?`, `offset?` |
+| `get_social_post` | Get complete post details including media, platforms, and logs | `post_id` |
+| `create_social_post` | Create a draft or scheduled post with enforced brand/account scope | See below |
+| `update_social_post` | Update draft or scheduled post (cannot edit published) | `post_id` (required), `caption?`, `platforms?`, `media_ids?`, `scheduled_time?`, `title?`, `link?` |
+| `delete_social_post` | Permanently delete a post | `post_id` |
 | `cancel_scheduled_post` | Cancel a scheduled post and revert to draft | `post_id` |
 
-### `create_post` Parameters
+### `create_social_post` Parameters
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
@@ -83,7 +83,6 @@ a draft. `posted` is rejected because publishing must use the validated product 
 | `list_connected_accounts` | List all connected social media accounts | `workspace_id?` |
 | `get_account_details` | Get details, health metrics, and usage stats for an account | `account_id` |
 | `disconnect_account` | Permanently remove a connected account | `account_id` |
-| `refresh_account_token` | Manually refresh an expiring OAuth token | `account_id` |
 
 ---
 
@@ -92,11 +91,12 @@ a draft. `posted` is rejected because publishing must use the validated product 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `upload_media` | Store a generated/supplied image in the LotsSocial media library with searchable context | `image_url` or `image_base64`, `workspace_id?`, `description?`, `alt_text?` |
-| `list_media` | List uploaded media files (images and videos) | `workspace_id?`, `type?` (image/video), `limit?` |
+| `list_media` | Search/list uploaded images and videos | `workspace_id?`, `file_type?` (image/video), `search?`, `limit?` |
 | `get_media_details` | Get file details, usage stats, and posts using this media | `media_id` |
+| `update_media_metadata` | Improve searchable description, alt text, or tags | `media_id`, `workspace_id?`, `description?`, `alt_text?`, `tags?` |
 | `delete_media` | Delete a media file (only if not used in scheduled/published posts) | `media_id` |
 
-> Use `upload_media` when the generated/supplied asset is available to the agent. Otherwise ask the owner to upload it in LotsSocial, then locate it with `list_media` and reference its UUID in `create_post`.
+> Use `upload_media` when the generated/supplied asset is available to the agent. Otherwise ask the owner to upload it in LotsSocial, then locate it with `list_media` and reference its UUID in `create_social_post`.
 
 ---
 
@@ -106,7 +106,6 @@ a draft. `posted` is rejected because publishing must use the validated product 
 |-----------|-------------|----------------|
 | `list_comments` | List all comments for a post (ordered chronologically) | `post_id` |
 | `add_comment` | Add a comment or reply to a post | `post_id`, `content`, `workspace_id?`, `parent_comment_id?` (for replies) |
-| `update_comment` | Edit comment content (author only) | `comment_id`, `content` |
 | `delete_comment` | Delete a comment (author or Manager+) | `comment_id` |
 
 ---

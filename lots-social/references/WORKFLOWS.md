@@ -72,7 +72,7 @@ normal teammate cycle.
 2. list_media(workspace_id)
    → Get media_ids if the post includes images/video
 
-3. create_post(
+3. create_social_post(
      caption="Your post text here... #hashtag",
      type="draft",
      brand_id="<selected_brand_id>",
@@ -97,7 +97,7 @@ normal teammate cycle.
 **Scenario:** Agent creates content, manager reviews before publishing.
 
 ```
-1. create_post(
+1. create_social_post(
      caption="...",
      workspace_id="...",
      platforms=["...", "..."]
@@ -131,8 +131,8 @@ normal teammate cycle.
 
 6b. If rejected:
     list_comments(post_id)  → read rejection reason
-    update_post(post_id, caption="...(revised)...")
-    update_approval_status(post_id, workspace_id, action="request_approval")
+    update_social_post(post_id, caption="...(revised)...")
+    set_social_post_approval(post_id, workspace_id, action="request_approval")
     → Re-request approval after revisions
 ```
 
@@ -157,7 +157,7 @@ approval, and use LotsSocial’s validated publishing UI/pipeline for “publish
    )
    → Get total clicks, top posts, platform breakdown
 
-2. list_posts(type="posted", workspace_id)
+2. list_social_posts(type="posted", workspace_id)
    → Get recent posted content
 
 3. For top 3-5 posts by engagement:
@@ -178,20 +178,20 @@ approval, and use LotsSocial’s validated publishing UI/pipeline for “publish
 **Scenario:** A scheduled post needs to go out at a different time.
 
 ```
-1. list_posts(type="scheduled", workspace_id)
+1. list_social_posts(type="scheduled", workspace_id)
    → Find the post to reschedule
 
 2. cancel_scheduled_post(post_id)
    → Reverts to draft status
 
-3. update_post(
+3. update_social_post(
      post_id,
      scheduled_time="2026-02-21T14:00:00Z",
      workspace_id
    )
    → Set new time (this changes type back to "scheduled")
 
-   OR use create_post with new scheduled_time if content also needs updating.
+   OR use create_social_post with new scheduled_time if content also needs updating.
 ```
 
 ---
@@ -208,10 +208,7 @@ approval, and use LotsSocial’s validated publishing UI/pipeline for “publish
    get_account_details(account_id)
    → Check health metrics and expiration
 
-3. For accounts with needs_attention status:
-   refresh_account_token(account_id)
-   → Attempt token refresh
-
-4. Report any accounts that need manual re-authorization
-   (disconnected accounts require OAuth re-connection via web app)
+3. Report accounts that need attention. Token refresh is automatic where the
+   provider supports it; accounts requiring re-authorization must be reconnected
+   through the LotsSocial web app.
 ```
