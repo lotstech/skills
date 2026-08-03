@@ -212,3 +212,57 @@ approval, and use LotsSocial’s validated publishing UI/pipeline for “publish
    provider supports it; accounts requiring re-authorization must be reconnected
    through the LotsSocial web app.
 ```
+
+---
+
+## 9. Reddit Draft Checklist (fail closed)
+
+**Scenario:** Owner wants a Reddit post, comment, or “promotion” for a connected Reddit account.
+
+Reddit is **not** Instagram, LinkedIn, X, or a brand broadcast channel. Each
+subreddit is its own moderated community. Prefer the attached campaign-plan
+playbook snapshot when present; otherwise call `get_platform_playbook`.
+
+```
+1. get_platform_playbook(platform="reddit")
+   → Read critical_rules, agent_caution, writing_structure, link_policy.
+   → Obey fail-closed rules before drafting.
+
+2. Confirm target context (required before any promo-shaped draft):
+   - Which subreddit?
+   - What do that sub’s rules say about self-promotion, flair, title format,
+     link posts, images, NSFW/spoiler?
+   - Is this a text post, link post, image/gallery, or a comment on an
+     existing thread?
+   If any of these are unknown → stop. Ask the owner, or write value-only
+   help with zero product pitch. Do not invent that promo is allowed.
+
+3. Tone and structure test:
+   - Title: plain, specific, honest — no launch-hype, no hashtag walls.
+   - Body: problem/result/question first for the community; never open with
+     a company pitch.
+   - Brand mention: only if rules allow and value stands alone without it;
+     disclose affiliation when the product is mentioned.
+   - Links: high-risk. Omit unless rules clearly allow and the post already
+     helps without the click.
+   - Hashtags: do not use.
+
+4. Self-check before create_social_post / rewrite:
+   - Would a skeptical moderator call this an ad? If yes → rewrite or kill
+     the brand mention.
+   - Would this work as a helpful post from a real community member with a
+     website (not a website with a Reddit account)? If no → rewrite.
+   - Prefer answering an existing thread over starting a promo post when
+     the owner’s goal is trust or discovery.
+
+5. create_social_post / review_social_post / rewrite_social_post
+   → Use the Reddit account UUID in platforms.
+   → Review against the Reddit playbook (attached version or live tool).
+   → Never reuse LinkedIn/X/Instagram caption drafts on Reddit.
+```
+
+**Hard stops (do not post):**
+- Subreddit unknown
+- Self-promo banned or unclear
+- Request is “promote our product” with no community value and no rule check
+- Astroturf, fake “as a user” voice, sockpuppet, or vote-manipulation framing

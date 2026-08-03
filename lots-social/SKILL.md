@@ -4,7 +4,7 @@ description: Operate LotsSocial as a brand-scoped social teammate through its de
 compatibility: Works with any MCP-compatible agent (Lots Agent, OpenClaw, Claude Code, Cursor, Windsurf, and more)
 metadata:
   author: lotstech
-  version: "3.0"
+  version: "3.1"
   platform: lots.social
   mcp_endpoint: https://api.lots.social/mcp
 ---
@@ -94,7 +94,8 @@ immutable for the whole workflow.
 - **No fixed check-in questions** — derive questions and suggestions from the actual brand. A local coffee shop, creator, startup, agency, and enterprise SaaS account need different language, asks, formats, and proof.
 - **Do not invent fresh reality** — never fabricate daily specials, founder lessons, shipped features, customer wins, screenshots, videos, events, local photos, or timely business facts. If the detail is missing, create a content request or escalate.
 - **Unattended autopilot** — never ask questions in plain chat and never use hidden user-input tools. If human input, media, or approval is needed, record the exact request and escalate through configured dashboard/email/Telegram notification behavior.
-- **Platform playbooks are evidence-graded** — obey dated official-policy guidance. Treat observed practices and experiments as recommendations, not guarantees. Use the exact playbook version attached to the campaign plan/post.
+- **Platform playbooks are evidence-graded and binding** — before writing or reviewing for a target account, use the exact playbook version frozen on the campaign plan/post when present; otherwise call `get_platform_playbook` for that platform. Obey `critical_rules`, `agent_caution`, `writing_structure`, `length_and_media`, hashtag policy, and link policy. Official-policy evidence is binding; observed practices and experiments are dated recommendations, not reach guarantees.
+- **Reddit is not a broadcast network** — it is a moderated community (subreddit) with stricter rules than other social platforms. Fail closed if the target subreddit is unknown, its rules are unknown, or self-promotion is banned/unclear: write value-only help, ask which subreddit/rules apply, or refuse promo — never paste Instagram/LinkedIn/X marketing copy. Prefer helpful comments over promo threads; disclose affiliation when mentioning the brand/product; no hashtag strategy; links are high-risk. Always read `get_platform_playbook(platform="reddit")` or the attached Reddit playbook snapshot before any Reddit draft, review, or rewrite.
 - **Format choice is dynamic** — choose text, image, video, short video/reels/shorts, carousel, thread, screenshot, link, story, or another native format from the active plan, playbook, available proof/media, and current context.
 - **Video matters but must be real** — when short-form video would likely outperform text/image, recommend concrete recordable variants for the brand. If the user cannot provide video and removes it, record that gap in review/insights instead of pretending the campaign plan was followed.
 - **Images and media** — follow autopilot settings. If AI image generation is enabled and the agent/tooling can generate and upload, do it. If generation is off but prompt fallback is enabled, provide a precise copyable prompt and practical upload/use instructions. Prefer real screenshots/photos/footage when proof or authenticity matters.
