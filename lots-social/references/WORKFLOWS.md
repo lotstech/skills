@@ -17,53 +17,51 @@ When the request does not already supply a Brand ID:
 
 3. Keep brand_id + allowed account IDs immutable for the operation
 
-4. get_social_operating_brief(brand_id, workspace_id)
-   → Follow its canonical v3 instructions, readiness, and exact context.
+4. get_business_profile(brand_id) and get_brand_social_goal(brand_id)
+   → Read the saved context before asking the owner anything.
 ```
 
 ---
 
-## 2. Campaign Setup and Normal Teammate Run
+## 2. Write This Week's Posts
 
-**Scenario:** The owner wants the teammate to plan and prepare the next useful posts.
+**Scenario:** the owner asks for posts about something specific.
 
 ```
-1. get_social_operating_brief
-   → If no Social Direction, help save one concise version.
-   → If the direction is imported/agent-drafted, ask the owner to confirm or rewrite it.
-   → If no active campaign, recommend a focused campaign or Always-on presence;
-     do not start routine production.
+1. get_business_profile(brand_id)
+   → Public truth is the only source of stateable facts.
+   → Internal guidance steers voice; never quote it as fact.
 
-2. For a new campaign:
-   create_social_campaign(...)
-   assess_social_campaign_readiness(campaign_id)
-   → Answer at most two real blockers, then re-assess.
-   build_social_campaign_plan(campaign_id)
-   activate_social_campaign(campaign_id) // only with owner confirmation
+2. get_social_campaign(brand_id)          [optional]
+   → If one is active, use its goal and per-account notes as context.
+   → If none is active, write anyway. A campaign is not required.
 
-3. run_social_teammate_workflow(
-  brand_id="<selected_brand_id>",
-  workspace_id="<workspace_id>",
-  source="agent",
-  idempotency_key="<stable-request-key>"
-)
-→ Returns scoped outcome counts and exact posts/questions needing attention.
+3. For each target account:
+   get_platform_playbook(platform)
+   → Obey critical_rules, writing_structure, length_and_media, link policy.
+
+4. list_media(workspace_id, search)       [when a post needs an asset]
+   → Reuse an existing screenshot or photo before asking for a new one.
+
+5. create_social_post(brand_id, platforms, caption or platform_captions, media_ids?)
+   → One call can target several accounts with per-account captions.
+
+6. review_social_post(post_id, brand_id)
+   → Report what passed and what needs fixing.
+
+7. Report back: what you drafted, for which accounts, and what needs the owner.
+   Stop there. Do not schedule or approve unless asked.
 ```
 
-This is the default only when a campaign is active. It creates the next rolling
-content sprint (maximum seven days), then performs writing, independent review,
-at most two rewrites, approval readiness, and eligible cadence scheduling.
-
-At campaign closure, call `generate_social_campaign_retrospective`, save the owner
-reflection separately, then call `end_social_campaign`. Continue reading live results
-later with `get_social_campaign_results`.
+If a post needs a fact you do not have — this week's result, a customer win, a
+screenshot of something new — ask one concise question and write the posts that
+do not depend on it.
 
 ---
 
 ## 3. Explicit One-Post Edit
 
-**Scenario:** The owner explicitly asks to create or edit one artifact outside the
-normal teammate cycle.
+**Scenario:** The owner explicitly asks to create or edit one specific post.
 
 ```
 1. list_connected_accounts(workspace_id)
@@ -126,8 +124,9 @@ normal teammate cycle.
    → Check if approved or rejected
 
 7a. If approved:
-    run_social_teammate_workflow(brand_id, workspace_id)
-    → Code chooses a valid cadence slot when settings allow scheduling.
+    update_social_post(post_id, scheduled_time="2026-08-12T09:00:00Z")
+    → Sets the time and queues the job. Ask the owner for the slot;
+      do not choose one on their behalf.
 
 6b. If rejected:
     list_comments(post_id)  → read rejection reason

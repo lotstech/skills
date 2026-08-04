@@ -4,27 +4,16 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 
 ---
 
-## Teammate Workflow
-
-| Tool Slug | Description | Key Parameters |
-|-----------|-------------|----------------|
-| `get_social_operating_brief` | Canonical teammate-v3 instructions, readiness, and exact brand Campaign/Plan context; call first after choosing one brand | `brand_id`, `workspace_id?` |
-| `run_social_teammate_workflow` | Preferred high-level v3 workflow: requires one active campaign, creates a rolling sprint of at most seven days, freezes exact direction/plan/playbook context, writes, independently reviews, rewrites at most twice, prepares approval, and schedules approved work | `brand_id`, `workspace_id?`, `idempotency_key?`, `max_transitions?`, `max_new_items?`, `shadow?` |
-| `evaluate_social_autopilot` | Read-only health/next-action inspection for agents by default | `brand_id`, `workspace_id?`, `source="agent"` |
-| `create_social_content_request` | Structured, deduplicated owner question with open-request budget | `brand_id`, `question`, `answer_type`, `options?`, `example_answer?`, `fact_keys?`, `blocking_item_ids?` |
-
-## Business Profile, Social Direction, and Campaigns
+## Business Profile, Brand Social Goal, and Campaigns
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `get_business_profile` / `save_business_profile` | Read or update the brand's two free-form markdown documents: `profile.business_profile` (public truth) and `profile.internal_guidance` (private steering, never quotable as fact). No structured sub-fields exist — do not invent them | `brand_id`, `workspace_id?`, `profile?` |
-| `get_social_direction` / `save_social_direction` | Read or version the simple long-term north star; never store platform tactics here | `brand_id`, `objective?`, `primary_audience?`, `desired_action?`, `constraints?` |
-| `list_social_campaigns` / `get_social_campaign` | Find campaign history or load the exact active/draft campaign with plan and sprints | `brand_id`, `campaign_id?`, `status?` |
-| `create_social_campaign` | Create a focused or Always-on draft linked to current Social Direction | `brand_id`, `name`, `goal_outcome`, `campaign_kind`, account scope/timeframe fields |
-| `assess_social_campaign_readiness` | Bounded intelligent discovery before planning; at most two requirements | `campaign_id`, `business_note?` |
-| `assess_social_campaign_plan_health` | Dated reassessment for an active Always-on campaign; preserves original discovery and recommends a new Plan version only when warranted | `campaign_id`, `business_note?` |
-| `build_social_campaign_plan` / `save_social_campaign_plan` | Build or save the canonical account-level plan after readiness | `campaign_id`, `business_note?`, `plan?` |
-| `activate_social_campaign` | Activate a ready campaign; ends the brand’s previous active campaign | `campaign_id` |
+| `get_brand_social_goal` / `save_brand_social_goal` | Read or version the brand's simple long-term goal and audience; never store platform tactics here | `brand_id`, `objective?`, `primary_audience?`, `desired_action?`, `constraints?` |
+| `list_social_campaigns` / `get_social_campaign` | Find campaign history or load the exact active/draft campaign with its plan | `brand_id`, `campaign_id?`, `status?` |
+| `create_social_campaign` | Create a focused or Always-on campaign draft | `brand_id`, `name`, `goal_outcome`, `campaign_kind`, account scope/timeframe fields |
+| `save_social_campaign_plan` | Save the per-account plan: role, audience, cadence, formats, notes | `campaign_id`, `plan` |
+| `activate_social_campaign` | Activate a campaign; ends the brand's previous active campaign | `campaign_id` |
 | `get_social_campaign_results` | Recalculate exact live campaign results; remains dynamic after campaign end | `campaign_id`, `refresh?` |
 | `generate_social_campaign_retrospective` | Save a dated evidence-bound AI assessment while analytics remain live | `campaign_id`, `final?` |
 | `save_campaign_owner_reflection` | Save the owner’s own conclusion separately | `campaign_id`, `owner_reflection` |
@@ -38,10 +27,6 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `list_workspaces` | List all workspaces where user is a member | — |
-| `get_workspace_details` | Get comprehensive workspace details, settings, and user role | `workspace_id` |
-| `create_workspace` | Create a new team workspace | `name` (required), `slug?`, `description?`, `avatar_url?` |
-| `update_workspace` | Update workspace name, description, or settings | `workspace_id`, `name?`, `description?` |
-| `delete_workspace` | Permanently delete a workspace (Owner only) | `workspace_id` |
 
 ---
 
@@ -61,7 +46,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `caption` | ✅ | Main text content (max 5000 chars; platform limits apply) |
-| `brand_id` | Required for teammate use | Selected immutable brand UUID |
+| `brand_id` | Required | Selected immutable brand UUID |
 | `type` | — | `"draft"` (default) or `"scheduled"` |
 | `platforms` | ✅ | Array of connected account UUIDs from the selected brand |
 | `scheduled_time` | Required if type=scheduled | ISO 8601 datetime, at least 5 min in future |
@@ -82,7 +67,6 @@ a draft. `posted` is rejected because publishing must use the validated product 
 |-----------|-------------|----------------|
 | `list_connected_accounts` | List all connected social media accounts | `workspace_id?` |
 | `get_account_details` | Get details, health metrics, and usage stats for an account | `account_id` |
-| `disconnect_account` | Permanently remove a connected account | `account_id` |
 
 ---
 
@@ -115,7 +99,7 @@ a draft. `posted` is rejected because publishing must use the validated product 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `get_approval_status` | Get current approval status of a post | `post_id`, `workspace_id` |
-| `set_social_post_approval` | Change approval status; teammate posts require a fresh passing independent review and every post account is verified against the immutable brand | `post_id` (required), `workspace_id` (required), `brand_id` (required for teammate use), `action` (required), `comment?` |
+| `set_social_post_approval` | Change approval status; AI-written posts require a fresh passing independent review and every post account is verified against the immutable brand | `post_id` (required), `workspace_id` (required), `brand_id` (required), `action` (required), `comment?` |
 
 ### Approval Actions
 
@@ -142,4 +126,3 @@ Approval flow: `none` → `pending` → `approved` or `rejected`
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
-| `list_workspace_members` | List all workspace members with roles and status | `workspace_id`, `status?` (active/pending/inactive) |
