@@ -12,6 +12,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | `get_brand_social_goal` / `save_brand_social_goal` | Read or version the brand's simple long-term goal and audience; never store platform tactics here | `brand_id`, `objective?`, `primary_audience?`, `desired_action?`, `constraints?` |
 | `list_social_campaigns` / `get_social_campaign` | Find campaign history or load the exact active/draft campaign with its plan | `brand_id`, `campaign_id?`, `status?` |
 | `create_social_campaign` | Create a focused or Always-on campaign draft | `brand_id`, `name`, `goal_outcome`, `campaign_kind`, account scope/timeframe fields |
+| `update_social_campaign` | Update a draft campaign. Goal, measurement and account scope lock after activation | `campaign_id`, name/timeframe/scope fields |
 | `save_social_campaign_plan` | Save the per-account plan: role, audience, cadence, formats, notes | `campaign_id`, `plan` |
 | `activate_social_campaign` | Activate a campaign; ends the brand's previous active campaign | `campaign_id` |
 | `get_social_campaign_results` | Recalculate exact live campaign results; remains dynamic after campaign end | `campaign_id`, `refresh?` |
@@ -22,11 +23,73 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 
 ---
 
-## Workspaces
+## Workspaces and Brands
 
 | Tool Slug | Description | Key Parameters |
 |-----------|-------------|----------------|
 | `list_workspaces` | List all workspaces where user is a member | — |
+| `list_brands` | List the brands in a workspace. A brand groups connected accounts; resolve one before any mutation | `workspace_id?` |
+
+---
+
+## Research — decide what to write before writing it
+
+Everything above answers "what exists". These answer "what should this post look
+like". Run them **before** `create_social_post`, not after.
+
+| Tool Slug | The question it answers | Cost |
+|-----------|-------------------------|------|
+| `get_brand_winning_posts` | *"Which of my own posts beat my normal, and what format were they?"* | Free — first-party analytics |
+| `research_public_posts` | *"What is working right now for this topic?"* | Paid provider |
+| `find_peer_accounts` | *"Who should I even be watching?"* | Paid provider |
+| `research_account_feed` | *"What is this named account posting, and how big are they?"* | Paid provider |
+| `research_audience_voice` | *"How do real customers phrase this?"* | Paid provider, ~3× |
+
+| Tool Slug | Key Parameters |
+|-----------|----------------|
+| `get_brand_winning_posts` | `brand_id?`, `platform?`, `limit?`, `date_from?`, `date_to?`, `connected_account_ids?`, `include_underperformers?` |
+| `research_public_posts` | `query` (required), `platform?` / `platforms?` (enum, max 3), `time_window?` (`week`/`month`/`any`), `limit?`, `brand_id?` |
+| `find_peer_accounts` | `query` (required), `platform?` / `platforms?` (enum), `compare_followers?`, `limit?` |
+| `research_account_feed` | `platform` (required, enum), `handle?` or `profile_url?`, `limit?` |
+| `research_audience_voice` | `query` (required), `platform?` / `platforms?` (enum), **`subreddits` required when Reddit is requested**, `sources_per_platform?`, `limit?` |
+
+**Platform coverage is not the publishing list.** lots.social publishes to 12+
+networks; the research provider can only search some of them, and each tool covers
+a different subset. The enum in each tool's schema is authoritative — an
+unsupported platform is rejected outright rather than returning an empty success.
+
+| Tool | Platforms |
+|------|-----------|
+| `research_public_posts` | twitter/x, instagram, linkedin, linkedin_page, tiktok, reddit, threads, facebook, youtube |
+| `research_account_feed` | twitter/x, instagram, linkedin, linkedin_page, threads |
+| `find_peer_accounts` | twitter/x, instagram, tiktok, threads, linkedin_page |
+| `research_audience_voice` | reddit, youtube, twitter/x |
+| *No research coverage* | bluesky, mastodon, pinterest, google-business |
+
+**Reading the response.** Every provider-backed tool returns its own gaps:
+
+```jsonc
+{
+  "platforms_returned":    [{ "platform": "reddit", "example_count": 6, "recency_applied": "sort_by=top" }],
+  "platforms_empty":       [{ "platform": "facebook", "reason": "no_results" }],
+  "platforms_failed":      [{ "platform": "youtube", "reason": "upstream_timeout" }],
+  "platforms_unsupported": [{ "platform": "bluesky", "reason": "not_covered_by_research_provider" }],
+  "platforms": ["reddit"]   // only those that actually returned examples
+}
+```
+
+Summarise from `platforms` alone. `recency_applied: null` means `time_window`
+could not be pushed to the provider (Instagram and Threads have no date control,
+so their results are filtered locally instead).
+
+**Boolean operators** — uppercase `AND`/`OR`/`NOT`, `subreddit:`, `from:`,
+`-exclude`, parentheses — work on twitter, linkedin, linkedin_page and reddit
+only. They are stripped elsewhere rather than searched as literal text.
+
+`vs_median` on `get_brand_winning_posts` is the multiple of that brand's own normal
+engagement on that platform. Above 1.0 beat the brand's normal; below 1.0
+underperformed. It is `null` when the brand has fewer than 3 posts on that platform
+— there is no baseline to compare against, so do not invent one.
 
 ---
 
@@ -37,6 +100,7 @@ All tools available via `https://api.lots.social/mcp`. Tools are called by their
 | `list_social_posts` | List posts filtered by type (draft/scheduled/posted) | `type` (required), `workspace_id?`, `created_by?`, `limit?`, `offset?` |
 | `get_social_post` | Get complete post details including media, platforms, and logs | `post_id` |
 | `create_social_post` | Create a draft or scheduled post with enforced brand/account scope | See below |
+| `bulk_create_social_posts` | Create up to 50 drafts or scheduled posts sharing one set of accounts | `posts` (required), `platforms` (required), `brand_id?`, `workspace_id?` |
 | `update_social_post` | Update draft or scheduled post (cannot edit published) | `post_id` (required), `caption?`, `platforms?`, `media_ids?`, `scheduled_time?`, `title?`, `link?` |
 | `delete_social_post` | Permanently delete a post | `post_id` |
 | `cancel_scheduled_post` | Cancel a scheduled post and revert to draft | `post_id` |
@@ -94,6 +158,20 @@ a draft. `posted` is rejected because publishing must use the validated product 
 
 ---
 
+## Review and Rewrite
+
+| Tool Slug | Description | Key Parameters |
+|-----------|-------------|----------------|
+| `review_social_post` | Run and save the canonical checklist review: anti-AI-slop, factual grounding, brand alignment, platform-native fit, media judgment, CTA, polish — with per-platform pass/fail rationales | `post_id` (required), `brand_id?`, `workspace_id?`, `notes?` |
+| `get_social_post_review` | Fetch the latest saved review and whether it is stale against the post's `updated_at` | `post_id` (required), `brand_id?`, `workspace_id?` |
+| `rewrite_social_post` | Rewrite using the saved strategy, playbooks, latest review, media policy, and your instructions. Updates drafts in place; published posts get a new draft revision. Never publishes | `post_id` (required), `instructions?`, `brand_id?`, `workspace_id?` |
+
+Writing, review and rewrite are separate executions. If no review exists,
+`rewrite_social_post` requires `instructions`. Never call a draft approval-ready
+without a fresh passing review of the current content version.
+
+---
+
 ## Approval Workflow
 
 | Tool Slug | Description | Key Parameters |
@@ -120,9 +198,5 @@ Approval flow: `none` → `pending` → `approved` or `rejected`
 | `get_post_analytics` | Engagement metrics for a published post (likes, comments, shares, impressions) | `post_id` |
 | `get_aggregate_analytics` | Workspace-level analytics with top posts and platform breakdown | `workspace_id?`, `date_from?`, `date_to?`, `platform?` |
 
----
-
-## Team
-
-| Tool Slug | Description | Key Parameters |
-|-----------|-------------|----------------|
+Connecting and disconnecting accounts happens in the LotsSocial dashboard, not
+through this skill.

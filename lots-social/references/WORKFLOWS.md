@@ -12,50 +12,110 @@ When the request does not already supply a Brand ID:
 1. list_workspaces
    → Get workspace_id and your role
 
-2. list_connected_accounts(workspace_id)
+2. list_brands(workspace_id)
+   → If more than one, ask which. Mutate nothing until answered.
+
+3. list_connected_accounts(workspace_id)
    → Resolve the accounts for exactly one selected brand
 
-3. Keep brand_id + allowed account IDs immutable for the operation
+4. Keep brand_id + allowed account IDs immutable for the operation
 
-4. get_business_profile(brand_id) and get_brand_social_goal(brand_id)
+5. get_business_profile(brand_id) and get_brand_social_goal(brand_id)
    → Read the saved context before asking the owner anything.
 ```
 
 ---
 
-## 2. Write This Week's Posts
+## 2. Write This Week's Posts — research first
 
-**Scenario:** the owner asks for posts about something specific.
+**Scenario:** the owner asks for posts about something specific, or just asks what
+they should post.
+
+Do not go straight to `create_social_post`. A draft written from the Business
+Profile alone reads like every other brand's marketing. Spend one or two research
+calls first, then write.
 
 ```
-1. get_business_profile(brand_id)
+1. get_brand_winning_posts(brand_id, include_underperformers=true)
+   → Free, first-party, and the strongest signal you have. These are the
+     brand's real results, so unlike public research they may be stated as fact.
+   → Read vs_median: above 1.0 beat this brand's own normal on that platform.
+     Note the format flags — has_media, is_video, is_carousel — and what the
+     underperformers had in common.
+   → If the brand has no history yet, skip to step 2.
+
+2. ONE paid research call, chosen by what is actually missing:
+   - No idea what the topic looks like publicly?
+       research_public_posts(query, platforms=[...up to 3], time_window="month")
+   - Owner named a competitor?
+       research_account_feed(platform, handle or profile_url)
+   - Owner has no idea who to watch?
+       find_peer_accounts(query, compare_followers=<brand's own follower count>)
+       → then research_account_feed on the closest size match
+   - Need the customer's own words for a hook?
+       research_audience_voice(query, platforms=["reddit"], subreddits=[...])
+       → subreddits is REQUIRED for reddit. Unscoped Reddit search returns
+         whatever is loudest on the site that week, not your audience.
+
+   Read the response coverage before you use it. Only platforms listed in
+   "platforms" produced examples; platforms_empty / platforms_failed /
+   platforms_unsupported are gaps. If it came back empty, say so — do not
+   fill the gap from memory.
+
+3. get_business_profile(brand_id)
    → Public truth is the only source of stateable facts.
    → Internal guidance steers voice; never quote it as fact.
+   → Research gives you structure — hook shape, length, format, CTA style.
+     Every claim in the draft still comes from here or from the owner.
 
-2. get_social_campaign(brand_id)          [optional]
+4. get_social_campaign(brand_id)          [optional]
    → If one is active, use its goal and per-account notes as context.
    → If none is active, write anyway. A campaign is not required.
 
-3. For each target account:
+5. For each target account:
    get_platform_playbook(platform)
    → Obey critical_rules, writing_structure, length_and_media, link policy.
+   → The playbook wins where it conflicts with what research observed.
 
-4. list_media(workspace_id, search)       [when a post needs an asset]
+6. list_media(workspace_id, search)       [when a post needs an asset]
    → Reuse an existing screenshot or photo before asking for a new one.
 
-5. create_social_post(brand_id, platforms, caption or platform_captions, media_ids?)
+7. create_social_post(brand_id, platforms, caption or platform_captions, media_ids?)
    → One call can target several accounts with per-account captions.
 
-6. review_social_post(post_id, brand_id)
+8. review_social_post(post_id, brand_id)
    → Report what passed and what needs fixing.
 
-7. Report back: what you drafted, for which accounts, and what needs the owner.
-   Stop there. Do not schedule or approve unless asked.
+9. Report back: what you drafted, for which accounts, what the research actually
+   showed, and what needs the owner. Stop there. Do not schedule or approve
+   unless asked.
 ```
 
 If a post needs a fact you do not have — this week's result, a customer win, a
 screenshot of something new — ask one concise question and write the posts that
 do not depend on it.
+
+**Worked example.** Owner: *"we're a small specialty coffee roaster, what should
+we post this week?"*
+
+```
+get_brand_winning_posts(brand_id, include_underperformers=true)
+  → 3 winners, all Instagram, all vs_median > 15, all is_video=true.
+    Underperformers: text-only product announcements.
+    Reading: this audience rewards short video, ignores announcements.
+
+research_audience_voice(
+  query="espresso machine cleaning",
+  platforms=["reddit"],
+  subreddits=["espresso"]
+)
+  → recurring_questions: "Did I ruin my portafilter by cleaning with cafiza?"
+    Reading: a real, specific anxiety in the customer's own words.
+
+→ Draft: a short video answering that exact question, in the format the
+  brand's own analytics already proved works. The hook comes from research;
+  the coffee facts come from the Business Profile; nothing is invented.
+```
 
 ---
 
