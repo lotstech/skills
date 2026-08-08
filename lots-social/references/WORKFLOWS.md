@@ -56,6 +56,13 @@ calls first, then write.
        research_audience_voice(query, platforms=["reddit"], subreddits=[...])
        → subreddits is REQUIRED for reddit. Unscoped Reddit search returns
          whatever is loudest on the site that week, not your audience.
+   - Owner wants to react to something that happened?
+       research_industry_news(query, time_window="week")
+       → Check age_days before writing "today". These are third-party
+         reports, never the brand's own news.
+
+   There is no trending-topics tool. "What's trending" is answered by
+   research_public_posts(time_window="week"), which ranks on engagement.
 
    Read the response coverage before you use it. Only platforms listed in
    "platforms" produced examples; platforms_empty / platforms_failed /

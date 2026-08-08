@@ -44,6 +44,7 @@ like". Run them **before** `create_social_post`, not after.
 | `find_peer_accounts` | *"Who should I even be watching?"* | Paid provider |
 | `research_account_feed` | *"What is this named account posting, and how big are they?"* | Paid provider |
 | `research_audience_voice` | *"How do real customers phrase this?"* | Paid provider, ~3× |
+| `research_industry_news` | *"Did anything happen in my field I could react to?"* | Paid provider |
 
 | Tool Slug | Key Parameters |
 |-----------|----------------|
@@ -52,6 +53,7 @@ like". Run them **before** `create_social_post`, not after.
 | `find_peer_accounts` | `query` (required), `platform?` / `platforms?` (enum), `compare_followers?`, `limit?` |
 | `research_account_feed` | `platform` (required, enum), `handle?` or `profile_url?`, `limit?` |
 | `research_audience_voice` | `query` (required), `platform?` / `platforms?` (enum), **`subreddits` required when Reddit is requested**, `sources_per_platform?`, `limit?` |
+| `research_industry_news` | `query` (required), `time_window?` (`hour`/`day`/`week`/`year`/`any`), `country?` (ISO-2), `limit?` |
 
 **Platform coverage is not the publishing list.** lots.social publishes to 12+
 networks; the research provider can only search some of them, and each tool covers
@@ -64,7 +66,23 @@ unsupported platform is rejected outright rather than returning an empty success
 | `research_account_feed` | twitter/x, instagram, linkedin, linkedin_page, threads |
 | `find_peer_accounts` | twitter/x, instagram, tiktok, threads, linkedin_page |
 | `research_audience_voice` | reddit, youtube, twitter/x |
+| `research_industry_news` | none — news publishers, not social platforms |
 | *No research coverage* | bluesky, mastodon, pinterest, google-business |
+
+**There is no trending-topics tool, and that is deliberate.** The provider has no
+trending feed for TikTok, YouTube, Reddit, Instagram, Facebook, Threads or
+LinkedIn. X trends exist but carry no volume data and cannot be filtered by niche,
+so a coffee roaster asking "what's trending" would be handed football scores. For
+*"what kind of post is working right now"* use `research_public_posts` with
+`time_window: "week"`, which ranks by real engagement. For *"did something happen
+I could react to"* use `research_industry_news`.
+
+`research_industry_news` notes: `time_window` has **no month option** — the
+provider accepts only hour, day, week, year and any. Check `age_days` on each
+article before writing "today". `dropped_offtopic` counts articles the provider
+returned that never mention your query; a high number means the query is too broad
+or too niche for news coverage. `recurring_terms` lists words appearing in two or
+more headlines — an empty list means no repeated theme, not a failure.
 
 **Reading the response.** Every provider-backed tool returns its own gaps:
 
